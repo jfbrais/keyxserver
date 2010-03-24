@@ -1,22 +1,18 @@
 /******************************************************
  Compagnie :	Transax Technologies
  Projet :		KeyExchangeServer
- Programmeur :	Jean-François Brais-Villemur, Analyste Réseau
+ Auteurs : 		Jean-François Brais-Villemur, Analyste Réseau
+ 				Marc-André Laporte, Programmeur Analyste
  Superviseur :	Alain Boucher, CTO
  Classe :		MessageParser.java			 
  Création  :	2010-03-08
- Dern. mod : 	2009-03-17
+ Dern. mod : 	2010-03-08
  *******************************************************
  Historique des modifications
  *******************************************************
  2010-03-08 : 	Début du projet
  
- 2010-03-08 : 	Ajout d'un tableau de sockets.
- 				Ajout des I/O Streams.
- 				Tests.
- 				
- 2010-03-17 :	Révisé la gestion des connexions
- 				Ajout d'une interface graphique
+ 2010-03-08 : 	Classe pour envoyer/recevoir des données.
  *******************************************************/
 
 package core;
@@ -40,7 +36,6 @@ public class MessageParser {
 	public void parseMessage(String messageReceived) {
 		if (messageReceived.equals("KEYX"))
 			System.out.println("Client requested a Key Exchange");
-		
 		if (messageReceived.equals("QUIT"))
 			System.out.println("Client disconnected.");
 	}

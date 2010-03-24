@@ -1,3 +1,23 @@
+/******************************************************
+ Compagnie :	Transax Technologies
+ Projet :		KeyExchangeServer
+ Auteurs : 		Jean-François Brais-Villemur, Analyste Réseau
+ 				Marc-André Laporte, Programmeur Analyste
+ Superviseur :	Alain Boucher, CTO
+ Classe :		Client.java			 
+ Création  :	2010-03-22
+ Dern. mod : 	2010-03-23
+ *******************************************************
+ Historique des modifications
+ *******************************************************
+ 2010-03-08 : 	Début du projet
+ 				
+ 2010-03-22 :	Création de la classe Client pour garder
+ 				toutes les informations dans un seul objet.
+ 				
+ 2010-03-23 : 	Ajout de mutateurs / accesseurs.
+ *******************************************************/
+
 package core;
 
 import java.io.BufferedReader;
@@ -14,10 +34,8 @@ public class Client {
 	private BufferedReader input ;
 	private PrintWriter output;
 	
-	public Client(String tID) {
+	public Client() {
 		connDate = new Date();
-		
-		terminalID = tID;
 	}
 	
 	public Date getConnectionTime() {
@@ -26,6 +44,10 @@ public class Client {
 	
 	public String getTerminalID() {
 		return terminalID;
+	}
+	
+	public void setTerminalID(String tID) {
+		terminalID = tID;
 	}
 	
 	public Socket getSocket() {

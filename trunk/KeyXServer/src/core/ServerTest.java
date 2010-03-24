@@ -1,11 +1,12 @@
 /******************************************************
  Compagnie :	Transax Technologies
  Projet :		KeyExchangeServer
- Programmeur :	Jean-François Brais-Villemur, Analyste Réseau
+ Auteurs : 		Jean-François Brais-Villemur, Analyste Réseau
+ 				Marc-André Laporte, Programmeur Analyste
  Superviseur :	Alain Boucher, CTO
- Classe :		ServerTest.java			 
+ Classe :		ServerTest.java
  Création  :	2010-03-08
- Dern. mod : 	2009-03-17
+ Dern. mod : 	2010-03-17
  *******************************************************
  Historique des modifications
  *******************************************************

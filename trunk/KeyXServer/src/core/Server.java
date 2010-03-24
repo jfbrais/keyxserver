@@ -1,11 +1,12 @@
 /******************************************************
  Compagnie :	Transax Technologies
  Projet :		KeyExchangeServer
- Programmeur :	Jean-François Brais-Villemur, Analyste Réseau
+ Auteurs :		Jean-François Brais-Villemur, Analyste Réseau
+ 				Marc-André Laporte, Programmeur Analyste
  Superviseur :	Alain Boucher, CTO
  Classe :		Server.java			 
  Création  :	2010-03-08
- Dern. mod : 	2009-03-17
+ Dern. mod : 	2010-03-23
  *******************************************************
  Historique des modifications
  *******************************************************
@@ -17,6 +18,9 @@
  				
  2010-03-17 :	Révisé la gestion des connexions
  				Ajout d'une interface graphique
+ 				
+ 2010-03-23 :	Le serveur ne garde maintenant qu'une
+				collection de Clients, contenant les sockets, etc.
  *******************************************************/
 
 package core;
@@ -37,20 +41,14 @@ public class Server implements Runnable {
 	private String IP = null;
 	private int port;
 	
-	private Client[] tabConnections;
-	
-//	private Socket[] tabSocket;
-//    private BufferedReader[] tabInput ;
-//    private PrintWriter[] tabOutput;
+	private Client[] tabClients;
+	private Client client = null;
 	
 	private ServerSocket serverSocket;
 	
 	private MessageParser msg;
 	
 	private Thread thread;
-	
-//	private ObjectOutputStream oos;
-//	private ObjectInputStream ois;
 	
 	private String inputLine;
 	private String outputLine;
@@ -82,7 +80,7 @@ public class Server implements Runnable {
 			maxConnections = DEFAULT_CONNECTIONS;
 		
 		// Initializes the Socket array with the max connections value.
-		tabConnections = new Client[maxConnections];
+		tabClients = new Client[maxConnections];
 		
 		System.out.println("Server initialized..");
 		
@@ -154,31 +152,41 @@ public class Server implements Runnable {
 			System.out.println("Accepting clients..");
 			
 			// Accept clients until limit is reached.
-			while (listening && tabConnections[tabConnections.length - 1] == null)
+			while (listening && tabClients[tabClients.length - 1] == null)
 			{
+				// Instantiates a Client to further add to the connected clients.
+				client = new Client();
+				
 				// Creates a socket to accept connections and stores it in a Socket tab.
-//				tabConnections[i].setSocket(serverSocket.accept());
+				client.setSocket(serverSocket.accept());
 				
 				// Creates reader to receive data.
-				tabConnections[i].setReader(new BufferedReader(new InputStreamReader(tabConnections[i].getSocket().getInputStream())));
+				client.setReader(new BufferedReader(new InputStreamReader(client.getSocket().getInputStream())));
 				
 				// Creates writer to send data.
-				tabConnections[i].setWriter(new PrintWriter(tabConnections[i].getSocket().getOutputStream(), true));
+				client.setWriter(new PrintWriter(client.getSocket().getOutputStream(), true));
+				
+				// Once everything is initialized, adds the connected client to the tab.
+				tabClients[i] = client;
 				
 				// Displays information relative to the newly connected client.
 				System.out.println("Client has been accepted.");
-				System.out.println("Local Port  : " + tabConnections[i].getSocket().getLocalPort());
-				System.out.println("Port number : " + tabConnections[i].getSocket().getPort());
-				System.out.println("IP address  : " + tabConnections[i].getSocket().getRemoteSocketAddress());
+				System.out.println("Local Port  : " + tabClients[i].getSocket().getLocalPort());
+				System.out.println("Port number : " + tabClients[i].getSocket().getPort());
+				System.out.println("IP address  : " + tabClients[i].getSocket().getRemoteSocketAddress());
 				
-				msg.sendMessage("Welcome.", tabConnections[i].getWriter());
+				msg.sendMessage("Welcome.", tabClients[i].getWriter());
 				
-				inputLine = tabConnections[i].getReader().readLine();
+				inputLine = tabClients[i].getReader().readLine();
 
-				msg.parseMessage(inputLine);
+				tabClients[i].setTerminalID(inputLine);
 				
-				if (inputLine != null)
-					System.out.println("Client["+i+"]:" + tabConnections[i].getSocket().getPort() + " sent -> \"" + inputLine + "\"");
+//				msg.parseMessage(inputLine);
+				
+				if (inputLine != null) {
+					System.out.println("Client["+i+"]:" + tabClients[i].getSocket().getPort() + " sent -> \"" + inputLine + "\"");
+					System.out.println(tabClients[i].getTerminalID() + " has been authentified @ " + tabClients[i].getConnectionTime());
+				}
 				else
 					System.out.println("Failed reading.");
 				
@@ -188,10 +196,10 @@ public class Server implements Runnable {
 			// When connections limit is reached, prints out the ports used by the remote client.
 			System.out.println("\nPorts used");
 			System.out.println("----------");
-			for (int j = 0; j < tabConnections.length; j++)
+			for (int j = 0; j < tabClients.length; j++)
 			{
-				System.out.print(tabConnections[j].getSocket().getPort());
-				if (j < tabConnections.length - 1)
+				System.out.print(tabClients[j].getSocket().getPort());
+				if (j < tabClients.length - 1)
 					System.out.print(" - ");
 			}
 		} catch (IOException e) {
